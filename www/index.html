@@ -1,0 +1,74 @@
+<!DOCTYPE HTML>
+  <html>
+  <head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, user-scalable=no">
+    <script type="text/javascript" src="components/loader.js"></script>
+    <script type="text/javascript" src="ncmb.min.js" charset="utf-8"></script>
+    <script type="text/javascript">
+        //参考： http://blog.mb.cloud.nifty.com/?p=3095
+        
+        var appKey    = "cbb6a2553b752f69b71ba95a60fa542c8d645741a90f16116dc06dbae660b045";
+        var clientKey = "e386f8491027da2b8cf94f6bae0fdffcddde6836dd25e1d4b842acea95b2b965";
+        var ncmb = new NCMB(appKey, clientKey);
+        var fileName = "uploaded.jpg"; //保存File名
+
+        ///// Called when app launch
+        /*
+        $(function() {
+          NCMB.initialize(appKey, clientKey);
+        });
+        */
+
+       function toBlob(base64) {
+            var bin = atob(base64.replace(/^.*,/, ''));
+            var buffer = new Uint8Array(bin.length);
+            for (var i = 0; i < bin.length; i++) {
+                buffer[i] = bin.charCodeAt(i);
+            }
+            // Blobを作成
+            try{
+                var blob = new Blob([buffer.buffer], {
+                    type: 'image/png'
+                });
+            }catch (e){
+                return false;
+            }
+            //console.log("ここまでは動いてるっぽい");
+            return blob;
+            //console.log("↑はダメ");
+        }
+
+      function snapPicture () {
+            navigator.camera.getPicture (onSuccess, onFail,
+                { quality: 50, destinationType: Camera.DestinationType.DATA_URL});
+
+            //成功した際に呼ばれるコールバック関数
+            function onSuccess (imageData) {
+                var byteCharacters = toBlob(imageData);
+                ncmb.File.upload(fileName, byteCharacters)
+                .then(function(res){
+                  console.log("アップロードできた");
+                })
+                .catch(function(err){
+                  console.log('アップロード失敗');
+                });
+                /*
+                var NCMBFile = new NCMB.File(fileName, byteCharacters, "image/png");
+                NCMBFile.save().then(function() {
+                    window.alert ('Upload is success!');
+                });
+                */
+            }
+            //失敗した場合に呼ばれるコールバック関数
+            function onFail (message) {
+                console.log('エラー: ' + message);
+            }
+     }
+    </script>
+  </head>
+  <body>
+    <input type="button" onclick="snapPicture()" value="Take Pictures"><br><br>
+    <img id="showImage" src="" width="150" height="150">
+  </body>
+  </html>
