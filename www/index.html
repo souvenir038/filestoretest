@@ -13,13 +13,6 @@
         var ncmb = new NCMB(appKey, clientKey);
         var fileName = "uploaded.jpg"; //保存File名
 
-        ///// Called when app launch
-        /*
-        $(function() {
-          NCMB.initialize(appKey, clientKey);
-        });
-        */
-
        function toBlob(base64) {
             var bin = atob(base64.replace(/^.*,/, ''));
             var buffer = new Uint8Array(bin.length);
@@ -53,12 +46,6 @@
                 .catch(function(err){
                   console.log('アップロード失敗');
                 });
-                /*
-                var NCMBFile = new NCMB.File(fileName, byteCharacters, "image/png");
-                NCMBFile.save().then(function() {
-                    window.alert ('Upload is success!');
-                });
-                */
             }
             //失敗した場合に呼ばれるコールバック関数
             function onFail (message) {
